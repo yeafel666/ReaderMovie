@@ -4,7 +4,7 @@
   <image class="user-avatar" src="/images/avatar.png">
   </image>
   <text class="user-name">Hello,yeafel</text>
-  <view class="motto-container">
+  <view class="motto-container" bind:tap="onTap">
     <text class="motto">开启小程序之旅</text>
   </view>
 </view>
