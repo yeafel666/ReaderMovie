@@ -16,12 +16,20 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-    
-  // 要给数组一个名字，否则加载到data()中，wxml识别不到
-  //   this.setData(post_content)
-  this.setData({
-    // posts_content  ES6写法，键的变量值和值的变量值则相同
-    posts_key: postsData.postList
-  })
+
+    // 要给数组一个名字，否则加载到data()中，wxml识别不到
+    //   this.setData(post_content)
+    this.setData({
+      // posts_content  ES6写法，键的变量值和值的变量值则相同
+      posts_key: postsData.postList
+    })
+  },
+
+  onPostTap:function(event){
+    var postId = event.currentTarget.dataset.postid
+    // console.log(postId)
+    wx.navigateTo({
+      url: 'post-detail/post-detail?id=' + postId,
+    })
   }
 })
