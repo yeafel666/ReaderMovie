@@ -24,6 +24,19 @@ Page({
       postsCollected[postId] = false
       wx.setStorageSync('posts_collected', postsCollected)
     }
+
+    var that = this
+    wx.onBackgroundAudioPlay(function(){
+        that.setData({
+          isPlayingMusic : true
+        })
+    })
+
+    wx.onBackgroundAudioPause(function(){
+      that.setData({
+        isPlayingMusic : false
+      })
+  })
   },
 
   onCollectionTap: function (event) {
@@ -115,6 +128,8 @@ Page({
     })
   },
   onMusicTap:function(event){
+    var currentPostId = this.data.currentPostId
+    var postData = postsData.postList[currentPostId]
     var isPlayingMusic = this.data.isPlayingMusic
     if(isPlayingMusic){
       wx.pauseBackgroundAudio()
@@ -123,9 +138,9 @@ Page({
       })
     }else{
       wx.playBackgroundAudio({
-        dataUrl: 'http://music.163.com/song/media/outer/url?id=188204.mp3',
-        title: '沉默是金-张国荣',
-        coverImgUrl: 'http://y.gtimg.cn/music/photo_new/T002R150x150M000003at0mJ2YrR2H.jpg?max_age=2592000'
+        dataUrl: postData.music.url,
+        title: postData.music.title,
+        coverImgUrl: postData.music.coverImg
       })
       this.setData({
         isPlayingMusic: true
