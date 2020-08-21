@@ -1,9 +1,11 @@
 var postsData = require('../../../data/posts-data.js')
+var app = getApp()
 Page({
   data: {
     isPlayingMusic: false
   },
   onLoad: function (option) {
+    var globalData = app.globalData
     var postId = option.id;
     this.data.currentPostId = postId
     var postData = postsData.postList[postId]
@@ -24,19 +26,31 @@ Page({
       postsCollected[postId] = false
       wx.setStorageSync('posts_collected', postsCollected)
     }
+    if (app.globalData.g_isPlayingMusic && app.globalData.g_currentMusicPostId === postId) {
+      this.setData({
+        isPlayingMusic: true
+      })
+    }
+    this.setMusicMonitor()
+  },
 
+  setMusicMonitor: function () {
     var that = this
-    wx.onBackgroundAudioPlay(function(){
-        that.setData({
-          isPlayingMusic : true
-        })
+    wx.onBackgroundAudioPlay(function () {
+      that.setData({
+        isPlayingMusic: true
+      })
+      app.globalData.g_isPlayingMusic = true
+      app.globalData.g_currentMusicPostId = that.data.currentPostId
     })
 
-    wx.onBackgroundAudioPause(function(){
+    wx.onBackgroundAudioPause(function () {
       that.setData({
-        isPlayingMusic : false
+        isPlayingMusic: false
       })
-  })
+      app.globalData.g_isPlayingMusic = false
+      app.globalData.g_currentMusicPostId = null
+    })
   },
 
   onCollectionTap: function (event) {
@@ -127,16 +141,16 @@ Page({
       }
     })
   },
-  onMusicTap:function(event){
+  onMusicTap: function (event) {
     var currentPostId = this.data.currentPostId
     var postData = postsData.postList[currentPostId]
     var isPlayingMusic = this.data.isPlayingMusic
-    if(isPlayingMusic){
+    if (isPlayingMusic) {
       wx.pauseBackgroundAudio()
       this.setData({
         isPlayingMusic: false
       })
-    }else{
+    } else {
       wx.playBackgroundAudio({
         dataUrl: postData.music.url,
         title: postData.music.title,
@@ -146,7 +160,7 @@ Page({
         isPlayingMusic: true
       })
     }
-    
+
 
   }
 })
