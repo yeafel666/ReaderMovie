@@ -6,7 +6,10 @@ Page({
   data:{
     inTheaters:{},
     comingSoon:{},
-    top250:{}
+    top250:{},
+    searchResult: {},
+    containerShow: true,
+    searchPanelShow: false
   },
   onLoad:function(event){
 
@@ -35,13 +38,32 @@ Page({
         "Content-Type": "application/json"
       },
       success: function(res){
-        console.log(res)
         that.processDoubanData(res.data,settedKey,categoryTitle)
       },
       fail: function(error){
         console.log(error)
       }
     })
+  },
+
+  onCancelImgTap:function(event){
+    this.setData({
+      containerShow: true,
+      searchPanelShow: false,
+      searchResult: {}
+    })
+  },
+  onBindFocus:function(event){
+    this.setData({
+      containerShow: false,
+      searchPanelShow: true
+    })
+  },
+
+  onBindConfirm:function(event){
+    var text = event.detail.value
+    var searchUrl = app.globalData.doubanBase + "/v2/movie/search?q=" + text
+    this.getMovieListData(searchUrl, "searchResult","")
   },
 
     processDoubanData:function(moviesDouban,settedKey,categoryTitle){
@@ -52,6 +74,7 @@ Page({
         if(title.length >= 6){
           title = title.substring(0,6) + "..."
         }
+        //[1,1,1,1,1]  [1,1,1,0,0]
         var temp = {
           stars: util.convertToStarsArray(subject.rating.stars),
           title: title,
